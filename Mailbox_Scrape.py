@@ -60,11 +60,11 @@ def get_CCID_from_sent():
             return CCID
 
 def get_emails_via_date():
-    # start_date = datetime.datetime(2022, 2, 7, tzinfo=EW_account.default_timezone)
+    start_date = datetime.datetime(2022, 2, 9, tzinfo=EW_account.default_timezone)
     # end_date = datetime.datetime(2021,9,30,tzinfo=EW_account.default_timezone)
 
-    start_date = datetime.date.today()
-    start_date = datetime.datetime(start_date.year,start_date.month,start_date.day,tzinfo=EW_account.default_timezone)
+    # start_date = datetime.date.today()
+    # start_date = datetime.datetime(start_date.year,start_date.month,start_date.day,tzinfo=EW_account.default_timezone)
     end_date = datetime.date.today() + datetime.timedelta(days=1)
     end_date = datetime.datetime(end_date.year, end_date.month, end_date.day, tzinfo=EW_account.default_timezone)
 
@@ -77,11 +77,11 @@ def get_emails_via_date():
     return email_id_list
 
 def get_sent_emails():
-    # start_date = datetime.datetime(2022, 2, 7, tzinfo=Support_account.default_timezone)
+    start_date = datetime.datetime(2022, 2, 9, tzinfo=Support_account.default_timezone)
     # end_date = datetime.datetime(2021,9,30,tzinfo=Support_account.default_timezone)
 
-    start_date = datetime.date.today()
-    start_date = datetime.datetime(start_date.year, start_date.month, start_date.day,tzinfo=Support_account.default_timezone)
+    # start_date = datetime.date.today()
+    # start_date = datetime.datetime(start_date.year, start_date.month, start_date.day,tzinfo=Support_account.default_timezone)
     end_date = datetime.date.today() + datetime.timedelta(days=1)
     end_date = datetime.datetime(end_date.year, end_date.month, end_date.day, tzinfo=Support_account.default_timezone)
 
@@ -116,6 +116,8 @@ for email_id in email_id_list:
 
     CCID = get_CCID()
     print_label_and_value(CCID)
+    if CCID == None:
+        CCID = "No CCID Found"
     received_CCIDs.append(CCID)
 
 send_id_list = get_sent_emails()
@@ -148,6 +150,6 @@ m = Message(
     account=EW_account,
     subject=subject_string,
     body=body_string,
-    to_recipients=['tannerl@eagleinc.com','miltonl@eagleinc.com']
+    to_recipients=['tannerl@eagleinc.com']
 )
 m.send()
