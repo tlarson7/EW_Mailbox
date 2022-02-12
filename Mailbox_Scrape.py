@@ -60,7 +60,7 @@ def get_CCID_from_sent():
             return CCID
 
 def get_emails_via_date():
-    start_date = datetime.datetime(2022, 2, 9, tzinfo=EW_account.default_timezone)
+    start_date = datetime.datetime(2022, 2, 11, tzinfo=EW_account.default_timezone)
     # end_date = datetime.datetime(2021,9,30,tzinfo=EW_account.default_timezone)
 
     # start_date = datetime.date.today()
@@ -77,7 +77,7 @@ def get_emails_via_date():
     return email_id_list
 
 def get_sent_emails():
-    start_date = datetime.datetime(2022, 2, 9, tzinfo=Support_account.default_timezone)
+    start_date = datetime.datetime(2022, 2, 11, tzinfo=Support_account.default_timezone)
     # end_date = datetime.datetime(2021,9,30,tzinfo=Support_account.default_timezone)
 
     # start_date = datetime.date.today()
