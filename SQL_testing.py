@@ -20,6 +20,7 @@ cursor_agr_view.execute('SELECT "Config_Name","Description","AGR_Date_End","AGR_
 # columns = [column[0] for column in cursor_agr_view.description]
 # print(columns)
 for row in cursor_agr_view:
+    #TODO Use cancelled flag == NULL to check for agreement existence
     config_name = row[0] #TODO Check if same as Contact view
     status = row[1]
     end_date = row[2]
