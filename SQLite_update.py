@@ -1,5 +1,6 @@
 import Mailbox_Scrape
 import sqlite3
+import datetime
 
 def insert_null_row(tb_name):
     c = cnxn.cursor()
@@ -21,6 +22,16 @@ def record_var_in_last_row(var,var_name,tb_name):
     c.execute(f'UPDATE "{tb_name}" SET "{var_name}"=? WHERE rowid=?', (str(var),rowid))
     cnxn.commit()
 
+def update_records(l,action):
+    c = cnxn.cursor()
+    # d = datetime.date.today()
+    d = datetime.date.today() - datetime.timedelta(days=1)
+    for e in l:
+        if e == "No CCID Found":
+            continue
+        c.execute('INSERT INTO Report_History VALUES (?,?,?)',(e,d,action))
+
+    cnxn.commit
 
 #     ================================================
 
@@ -32,13 +43,15 @@ c.execute('SELECT "CCID" FROM "Config_Info"')
 for row in c:
     CCIDs_sqlite.append(row[0])
 
-for report_CCID in Mailbox_Scrape.received_CCIDs:
+for report_CCID in set(Mailbox_Scrape.received_CCIDs):
     if report_CCID not in CCIDs_sqlite:
+        if report_CCID == "No CCID Found":
+            continue
         insert_null_row("Config_Info")
         record_var_in_last_row(report_CCID,"CCID","Config_Info")
 
-
-
+update_records(set(Mailbox_Scrape.received_only),"Received")
+update_records(set(Mailbox_Scrape.sent_CCIDs),"Sent")
 
 
 cnxn.commit()

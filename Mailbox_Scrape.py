@@ -2,6 +2,7 @@ from exchangelib import DELEGATE, Account, Credentials, Message, Mailbox
 from bs4 import BeautifulSoup
 import inspect
 import datetime
+from Tanner_functions import print_len_label_val
 
 EW_credentials = Credentials(username='eagle\\eaglewatch',password='uOTc22tGZT75cFK1x^F!Cd&ZTs5ET8')
 
@@ -60,11 +61,12 @@ def get_CCID_from_sent():
             return CCID
 
 def get_emails_via_date():
-    start_date = datetime.datetime(2022, 2, 11, tzinfo=EW_account.default_timezone)
+    # start_date = datetime.datetime(2022, 2, 11, tzinfo=EW_account.default_timezone)
+    start_date = datetime.date.today() - datetime.timedelta(days=1)
     # end_date = datetime.datetime(2021,9,30,tzinfo=EW_account.default_timezone)
 
     # start_date = datetime.date.today()
-    # start_date = datetime.datetime(start_date.year,start_date.month,start_date.day,tzinfo=EW_account.default_timezone)
+    start_date = datetime.datetime(start_date.year,start_date.month,start_date.day,tzinfo=EW_account.default_timezone)
     end_date = datetime.date.today() + datetime.timedelta(days=1)
     end_date = datetime.datetime(end_date.year, end_date.month, end_date.day, tzinfo=EW_account.default_timezone)
 
@@ -77,11 +79,12 @@ def get_emails_via_date():
     return email_id_list
 
 def get_sent_emails():
-    start_date = datetime.datetime(2022, 2, 11, tzinfo=Support_account.default_timezone)
+    # start_date = datetime.datetime(2022, 2, 11, tzinfo=Support_account.default_timezone)
+    start_date = datetime.date.today() - datetime.timedelta(days=1)
     # end_date = datetime.datetime(2021,9,30,tzinfo=Support_account.default_timezone)
 
     # start_date = datetime.date.today()
-    # start_date = datetime.datetime(start_date.year, start_date.month, start_date.day,tzinfo=Support_account.default_timezone)
+    start_date = datetime.datetime(start_date.year, start_date.month, start_date.day,tzinfo=Support_account.default_timezone)
     end_date = datetime.date.today() + datetime.timedelta(days=1)
     end_date = datetime.datetime(end_date.year, end_date.month, end_date.day, tzinfo=Support_account.default_timezone)
 
@@ -104,6 +107,11 @@ def convert_list_to_string(l):
 email_id_list = get_emails_via_date()
 received_CCIDs = []
 sent_CCIDs = []
+blanks_received = []
+received_only = []
+duplicates_sent = []
+blanks_sent = []
+
 for email_id in email_id_list:
     email = EW_account.inbox.get(id=email_id)
     # print(email)
@@ -119,6 +127,11 @@ for email_id in email_id_list:
     if CCID == None:
         CCID = "No CCID Found"
     received_CCIDs.append(CCID)
+
+    ### Check if report is blank via number of tables
+    tables = soup.find_all("table")
+    if len(tables) == 0 or email.attachments != []:
+        blanks_received.append(CCID)
 
 send_id_list = get_sent_emails()
 for sent_id in send_id_list:
@@ -136,8 +149,32 @@ for sent_id in send_id_list:
     print_label_and_value(CCID)
     sent_CCIDs.append(CCID)
 
-print(len(received_CCIDs),received_CCIDs)
-print(len(sent_CCIDs),sent_CCIDs)
+    tables = soup.find_all("table")
+    if len(tables) == 0 or email.attachments != []:
+        blanks_sent.append(CCID)
+
+for rec_id in received_CCIDs:
+    if rec_id not in sent_CCIDs:
+        received_only.append(rec_id)
+
+for sID in set(sent_CCIDs):
+    if sent_CCIDs.count(sID) > 1:
+        duplicates_sent.append(sID)
+
+received_CCIDs.sort()
+sent_CCIDs.sort()
+blanks_received.sort()
+received_only.sort()
+duplicates_sent.sort()
+blanks_sent.sort()
+
+print_len_label_val(received_CCIDs)
+print_len_label_val(sent_CCIDs)
+print_len_label_val(blanks_received)
+print_len_label_val(received_only)
+print_len_label_val(duplicates_sent)
+print_len_label_val(blanks_sent)
+
 
 received_CCIDs_string = convert_list_to_string(received_CCIDs)
 sent_CCIDs_string = convert_list_to_string(sent_CCIDs)
@@ -152,4 +189,4 @@ m = Message(
     body=body_string,
     to_recipients=['tannerl@eagleinc.com']
 )
-m.send()
+# m.send()
